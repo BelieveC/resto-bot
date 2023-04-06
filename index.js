@@ -27,9 +27,11 @@ const { MainDialog } = require("./dialogs/mainDialog");
 // the bot's booking dialog
 const { OrderPizzaDialog } = require("./dialogs/orderPizzaDialog");
 const { BookingPlaceDialog } = require("./dialogs/bookingPlaceDialog");
+const { MenuDialog } = require("./dialogs/menuDialog");
 
 const ORDERPIZZA_DIALOG = "orderPizzaDialog";
 const BOOKINGPLACE_DIALOG = "bookingPlaceDialog";
+const MENU_DIALOG = "menuDialog";
 
 // Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
 const ENV_FILE = path.join(__dirname, ".env");
@@ -86,7 +88,8 @@ const conversationState = new ConversationState(memoryStorage);
 const userState = new UserState(memoryStorage);
 
 //QnA Connection
-var endpointHostName = process.env.QnAEndpointHostName;
+// var endpointHostName = process.env.QnAEndpointHostName;
+var endpointHostName = "https://qabotapp.cognitiveservices.azure.com";
 if (!endpointHostName.startsWith("https://")) {
   endpointHostName = "https://" + endpointHostName;
 }
@@ -113,12 +116,14 @@ const luisRecognizer = new UserInputRecognizer(luisConfig);
 // Create the main dialog.
 const orderPizzaDialog = new OrderPizzaDialog(ORDERPIZZA_DIALOG);
 const bookingPlaceDialog = new BookingPlaceDialog(BOOKINGPLACE_DIALOG);
+const menuDialog = new OrderPizzaDialog(MENU_DIALOG);
 
 const dialog = new MainDialog(
   luisRecognizer,
   qnaService,
   orderPizzaDialog,
-  bookingPlaceDialog
+  bookingPlaceDialog,
+  menuDialog
 );
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog);
 
