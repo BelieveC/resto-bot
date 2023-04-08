@@ -26,6 +26,17 @@ const {
 const { QnABotWithMSI } = require("./bots/QnABotWithMSI");
 const { RootDialog } = require("./dialogs/rootDialog");
 const { DialogAndWelcomeBot } = require("./bots/dialogAndWelcomeBot");
+const { UserInputRecognizer } = require("./dialogs/userInputRecognizer");
+const { QnAMakerBaseDialog } = require("./dialogs/qnamakerBaseDialog");
+
+const ORDERPIZZA_DIALOG = "orderPizzaDialog";
+const BOOKINGPLACE_DIALOG = "bookingPlaceDialog";
+const MENU_DIALOG = "menuDialog";
+
+// the bot's booking dialog
+const { OrderPizzaDialog } = require("./dialogs/orderPizzaDialog");
+const { BookingPlaceDialog } = require("./dialogs/bookingPlaceDialog");
+const { MenuDialog } = require("./dialogs/menuDialog");
 
 // Create adapter.
 const credentialsFactory = new ConfigurationServiceClientCredentialFactory({
@@ -83,8 +94,7 @@ if (
   qnaServiceType = "language";
 }
 
-// Create the main dialog.
-const dialog = new RootDialog(
+const qnaService = new QnAMakerBaseDialog(
   process.env.ProjectName || process.env.QnAKnowledgebaseId,
   process.env.LanguageEndpointKey || process.env.QnAEndpointKey,
   process.env.LanguageEndpointHostName || process.env.QnAEndpointHostName,
@@ -92,6 +102,28 @@ const dialog = new RootDialog(
   process.env.DefaultAnswer,
   process.env.EnablePreciseAnswer?.toLowerCase(),
   process.env.DisplayPreciseAnswerOnly?.toLowerCase()
+);
+
+const { LuisAppId, LuisAPIKey, LuisAPIHostName } = process.env;
+const luisConfig = {
+  applicationId: LuisAppId,
+  endpointKey: LuisAPIKey,
+  endpoint: `https://${LuisAPIHostName}`,
+};
+
+const luisRecognizer = new UserInputRecognizer(luisConfig);
+// Create the main dialog.
+const orderPizzaDialog = new OrderPizzaDialog(ORDERPIZZA_DIALOG);
+const bookingPlaceDialog = new BookingPlaceDialog(BOOKINGPLACE_DIALOG);
+const menuDialog = new OrderPizzaDialog(MENU_DIALOG);
+
+// Create the main dialog.
+const dialog = new RootDialog(
+  luisRecognizer,
+  qnaService,
+  orderPizzaDialog,
+  bookingPlaceDialog,
+  menuDialog
 );
 
 // Create the bot's main handler.
