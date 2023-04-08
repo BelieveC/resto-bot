@@ -25,6 +25,7 @@ const {
 
 const { QnABotWithMSI } = require("./bots/QnABotWithMSI");
 const { RootDialog } = require("./dialogs/rootDialog");
+const { DialogAndWelcomeBot } = require("./bots/dialogAndWelcomeBot");
 
 // Create adapter.
 const credentialsFactory = new ConfigurationServiceClientCredentialFactory({
