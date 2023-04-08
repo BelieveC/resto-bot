@@ -297,12 +297,13 @@ class RootDialog extends ComponentDialog {
    */
   async finalStep(stepContext) {
     // If the child dialog ("OrderPizzaDialog") was cancelled or the user failed to confirm, the Result here will be null.
-    if (stepContext.result) {
+    if (stepContext.result && stepContext?.result[0]?.score === undefined) {
       // Now we have all the booking details.
 
       // This is where calls to the booking AOU service or database would go.
 
       // If the call to the booking service was successful tell the user.
+      console.log(stepContext.result);
       const msg = `You will be contacted shortly for confirmation.`;
       await stepContext.context.sendActivity(
         msg,
