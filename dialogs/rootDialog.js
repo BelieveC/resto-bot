@@ -65,6 +65,7 @@ class RootDialog extends ComponentDialog {
     this.addDialog(new TextPrompt("TextPrompt"))
       .addDialog(orderPizzaDialog)
       .addDialog(bookingPlaceDialog)
+      .addDialog(qnaService)
       .addDialog(new TextPrompt(TEXT_PROMPT))
       .addDialog(
         new WaterfallDialog(INITIAL_DIALOG, [
@@ -254,8 +255,10 @@ class RootDialog extends ComponentDialog {
 
       default: {
         // Catch all for unhandled intents
-
-        await step.beginDialog(QNAMAKER_BASE_DIALOG);
+        return await stepContext.beginDialog(
+          "qnamaker-base-dialog",
+          QNAMAKER_BASE_DIALOG
+        );
       }
     }
 
